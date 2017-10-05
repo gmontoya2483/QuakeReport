@@ -1,5 +1,8 @@
 package com.example.android.quakereport;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Gabriel on 03/10/2017.
  */
@@ -8,10 +11,10 @@ class Earthquake {
 
     private String mMagnitude;
     private String mLocation;
-    private String mDate;
+    private long mDate;
 
 
-    public Earthquake(String magnitude, String location, String date) {
+    public Earthquake(String magnitude, String location, long date) {
         this.mMagnitude = magnitude;
         this.mLocation = location;
         this.mDate = date;
@@ -35,9 +38,9 @@ class Earthquake {
 
     /**
      * Getter method for the member variable mDate
-     * @return the date
+     * @return the date in Unix format
      */
-    public String getDate() {
+    public long getDate() {
         return mDate;
     }
 }

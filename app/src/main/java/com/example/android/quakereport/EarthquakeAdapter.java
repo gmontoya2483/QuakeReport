@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -64,8 +65,13 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>{
         TextView locationTextView=(TextView) listItemView.findViewById(R.id.location);
         locationTextView.setText(currentEarthquake.getLocation());
 
+        Date dateObject = new Date(currentEarthquake.getDate());
+
         TextView dateTextView=(TextView) listItemView.findViewById(R.id.date);
-        dateTextView.setText(currentEarthquake.getDate());
+        dateTextView.setText(QueryUtils.formatDate(dateObject));
+
+        TextView timeTextView=(TextView) listItemView.findViewById(R.id.time);
+        timeTextView.setText(QueryUtils.formatTime(dateObject));
 
         return listItemView;
 
