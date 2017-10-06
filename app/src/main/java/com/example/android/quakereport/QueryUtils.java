@@ -6,6 +6,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -57,7 +58,7 @@ public final class QueryUtils {
             for (int i = 0; i < earthquakeArray.length(); i++){
                 JSONObject currentEarthquake = earthquakeArray.getJSONObject(i);
                 JSONObject properties = currentEarthquake.getJSONObject("properties");
-                String magnitude = properties.getString("mag");
+                double magnitude = properties.getDouble("mag");
                 String location = properties.getString("place");
                 long time = properties.getLong("time");
 
@@ -77,24 +78,6 @@ public final class QueryUtils {
     }
 
 
-    /**
-     * Format the object date to Show the date as String in the correct format.
-     * @param dateObject
-     * @return the formatted date string (i.e. "Mar 3, 1984") from a Date object.
-     */
-    public static String formatDate(Date dateObject){
-        SimpleDateFormat dateFormat = new SimpleDateFormat("LLL dd, yyyy");
-        return dateFormat.format(dateObject);
-    }
 
-    /**
-     * Format the object date to Show the time as String in the correct format.
-     * @param dateObject
-     * @return tReturn the formatted date string (i.e. "4:30 PM") from a Date object.
-     */
-    public static String formatTime(Date dateObject){
-        SimpleDateFormat timeFormat = new SimpleDateFormat("h:mm a");
-        return timeFormat.format(dateObject);
-    }
 
 }

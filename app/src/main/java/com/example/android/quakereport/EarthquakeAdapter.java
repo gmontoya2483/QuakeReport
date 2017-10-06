@@ -19,6 +19,9 @@ import java.util.List;
 
 public class EarthquakeAdapter extends ArrayAdapter<Earthquake>{
 
+
+    private static final String LOCATION_SEPARATOR = " of ";
+
     /**
      *
      * *This is our own custom constructor (it doesn't mirror a superclass constructor).
@@ -50,6 +53,10 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>{
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+
+        String primaryLocation;
+        String locationOffset;
+
         View listItemView = convertView;
 
         // Check if the existing view is being reused, otherwise inflate the view
@@ -59,19 +66,40 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>{
 
         Earthquake currentEarthquake=getItem(position);
 
+        //Set the Magnitude
+        String formattedMagnitude=EarthquakeUtils.formatMagnitude(currentEarthquake.getMagnitude());
         TextView magTextView=(TextView) listItemView.findViewById(R.id.magnitude);
-        magTextView.setText(currentEarthquake.getMagnitude());
+        magTextView.setText(formattedMagnitude);
 
-        TextView locationTextView=(TextView) listItemView.findViewById(R.id.location);
-        locationTextView.setText(currentEarthquake.getLocation());
 
+        //Set the offset and the primary location
+        String originalLocation = currentEarthquake.getLocation();
+
+        if (originalLocation.contains(LOCATION_SEPARATOR)) {
+            String[] parts = originalLocation.split(LOCATION_SEPARATOR);
+            locationOffset = parts[0] + LOCATION_SEPARATOR;
+            primaryLocation = parts[1];
+        } else {
+            locationOffset = getContext().getString(R.string.near_the);
+            primaryLocation = originalLocation;
+        }
+
+
+        TextView offsetTextView=(TextView) listItemView.findViewById(R.id.location_offset);
+        offsetTextView.setText(locationOffset);
+
+        TextView primaryLocationTextView=(TextView) listItemView.findViewById(R.id.primary_location);
+        primaryLocationTextView.setText(primaryLocation);
+
+
+        //Set the date in the view
         Date dateObject = new Date(currentEarthquake.getDate());
 
         TextView dateTextView=(TextView) listItemView.findViewById(R.id.date);
-        dateTextView.setText(QueryUtils.formatDate(dateObject));
+        dateTextView.setText(EarthquakeUtils.formatDate(dateObject));
 
         TextView timeTextView=(TextView) listItemView.findViewById(R.id.time);
-        timeTextView.setText(QueryUtils.formatTime(dateObject));
+        timeTextView.setText(EarthquakeUtils.formatTime(dateObject));
 
         return listItemView;
 
