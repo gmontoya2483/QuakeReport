@@ -12,6 +12,7 @@ class Earthquake {
     private double mMagnitude;
     private String mLocation;
     private long mDate;
+    private String mUrl;
 
 
     /**
@@ -21,11 +22,13 @@ class Earthquake {
      * @param location is the location where the earthquake happened
      * @param timeInMilliseconds is the time in milliseconds (from the Epoch) when the
      *                           earthquake happened
+     * @param url is the website URL to find more details about the earthquake
      */
-    public Earthquake(double magnitude, String location, long timeInMilliseconds) {
+    public Earthquake(double magnitude, String location, long timeInMilliseconds, String url) {
         this.mMagnitude = magnitude;
         this.mLocation = location;
         this.mDate = timeInMilliseconds;
+        this.mUrl = url;
     }
 
     /**
@@ -51,4 +54,16 @@ class Earthquake {
     public long getDate() {
         return mDate;
     }
+
+
+    /**
+     * Getter method for the member variable mUrl
+     * @return the url
+     */
+    public String getUrl() {
+        return mUrl;
+    }
+
+
+
 }
