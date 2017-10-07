@@ -1,6 +1,7 @@
 package com.example.android.quakereport;
 
 import android.content.Context;
+import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -60,16 +61,25 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>{
         View listItemView = convertView;
 
         // Check if the existing view is being reused, otherwise inflate the view
-        if (listItemView==null){
+        if (listItemView == null){
             listItemView= LayoutInflater.from(getContext()).inflate(R.layout.earthquake_list_item,parent,false);
         }
 
-        Earthquake currentEarthquake=getItem(position);
+        Earthquake currentEarthquake = getItem(position);
 
-        //Set the Magnitude
-        String formattedMagnitude=EarthquakeUtils.formatMagnitude(currentEarthquake.getMagnitude());
-        TextView magTextView=(TextView) listItemView.findViewById(R.id.magnitude);
+        //Set the Magnitude value
+        double currentMagnitude = currentEarthquake.getMagnitude();
+        String formattedMagnitude = EarthquakeUtils.formatMagnitude(currentMagnitude);
+        TextView magTextView = (TextView) listItemView.findViewById(R.id.magnitude);
         magTextView.setText(formattedMagnitude);
+
+        //set the Magnitude color
+        int magnitudeColor = EarthquakeUtils.getMagnitudeColor(getContext(),currentMagnitude);
+        // Set the proper background color on the magnitude circle.
+        // Fetch the background from the TextView, which is a GradientDrawable.
+        GradientDrawable magnitudeCircle = (GradientDrawable) magTextView.getBackground();
+        magnitudeCircle.setColor(magnitudeColor);
+
 
 
         //Set the offset and the primary location
@@ -85,10 +95,10 @@ public class EarthquakeAdapter extends ArrayAdapter<Earthquake>{
         }
 
 
-        TextView offsetTextView=(TextView) listItemView.findViewById(R.id.location_offset);
+        TextView offsetTextView =(TextView) listItemView.findViewById(R.id.location_offset);
         offsetTextView.setText(locationOffset);
 
-        TextView primaryLocationTextView=(TextView) listItemView.findViewById(R.id.primary_location);
+        TextView primaryLocationTextView =(TextView) listItemView.findViewById(R.id.primary_location);
         primaryLocationTextView.setText(primaryLocation);
 
 
