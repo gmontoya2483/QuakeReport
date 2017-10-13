@@ -17,12 +17,14 @@ package com.example.android.quakereport;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -35,11 +37,16 @@ public class EarthquakeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
+        EarthquakeAsyncTask task = new EarthquakeAsyncTask();
+        task.execute();
 
-        //Get the list of earthquaques from {@Link QueryUtils}
-        ArrayList<Earthquake> earthquakes = QueryUtils.extractEarthquakes();
 
 
+    }
+
+
+
+    private void updateGUI(ArrayList<Earthquake> earthquakes){
 
         // Find a reference to the {@link ListView} in the layout
         ListView earthquakeListView = (ListView) findViewById(R.id.list);
@@ -74,6 +81,43 @@ public class EarthquakeActivity extends AppCompatActivity {
             }
         });
 
-
     }
+
+
+
+    private class EarthquakeAsyncTask extends AsyncTask <Void, Void, ArrayList<Earthquake>>{
+
+        @Override
+        protected ArrayList<Earthquake> doInBackground(Void... params) {
+
+            String jSonResponse= null;
+            ArrayList<Earthquake> earthquakes=null;
+            try {
+                jSonResponse = QueryUtils.makeHttpRequest();
+
+                //Get the list of earthquaques from {@Link QueryUtils}
+                earthquakes = QueryUtils.extractEarthquakes(jSonResponse);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+
+            }
+
+            return earthquakes;
+
+
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Earthquake> earthquakes) {
+            if (earthquakes==null){
+                return;
+            }
+
+            updateGUI(earthquakes);
+
+
+        }
+    }
+
 }
