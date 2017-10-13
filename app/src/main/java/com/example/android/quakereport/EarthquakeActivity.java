@@ -15,10 +15,13 @@
  */
 package com.example.android.quakereport;
 
+import android.app.LoaderManager;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.content.AsyncTaskLoader;
+import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,19 +29,34 @@ import android.widget.ListView;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 
-public class EarthquakeActivity extends AppCompatActivity {
+public class EarthquakeActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<ArrayList<Earthquake>>{
 
     public static final String LOG_TAG = EarthquakeActivity.class.getName();
+
+    /**
+     * Constant value for the earthquake loader ID. We can choose any integer.
+     * This really only comes into play if you're using multiple loaders.
+     */
+    private static final int EARTHQUAKE_LOADER_ID = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
 
-        EarthquakeAsyncTask task = new EarthquakeAsyncTask();
-        task.execute();
+
+        // Get a reference to the LoaderManager, in order to interact with loaders.
+        LoaderManager loaderManager = getLoaderManager();
+
+        // Initialize the loader. Pass in the int ID constant defined above and pass in null for
+        // the bundle. Pass in this activity for the LoaderCallbacks parameter (which is valid
+        // because this activity implements the LoaderCallbacks interface).
+        loaderManager.initLoader(EARTHQUAKE_LOADER_ID, null, this).forceLoad();
+
+
 
 
 
@@ -83,41 +101,27 @@ public class EarthquakeActivity extends AppCompatActivity {
 
     }
 
-
-
-    private class EarthquakeAsyncTask extends AsyncTask <Void, Void, ArrayList<Earthquake>>{
-
-        @Override
-        protected ArrayList<Earthquake> doInBackground(Void... params) {
-
-            String jSonResponse= null;
-            ArrayList<Earthquake> earthquakes=null;
-            try {
-                jSonResponse = QueryUtils.makeHttpRequest();
-
-                //Get the list of earthquaques from {@Link QueryUtils}
-                earthquakes = QueryUtils.extractEarthquakes(jSonResponse);
-
-            } catch (IOException e) {
-                e.printStackTrace();
-
-            }
-
-            return earthquakes;
-
-
-        }
-
-        @Override
-        protected void onPostExecute(ArrayList<Earthquake> earthquakes) {
-            if (earthquakes==null){
-                return;
-            }
-
-            updateGUI(earthquakes);
-
-
-        }
+    @Override
+    public android.content.Loader<ArrayList<Earthquake>> onCreateLoader(int id, Bundle args) {
+        return new EarthquakeLoader(EarthquakeActivity.this);
     }
+
+    @Override
+    public void onLoadFinished(android.content.Loader<ArrayList<Earthquake>> loader, ArrayList<Earthquake> earthquakes) {
+        if (earthquakes==null){
+            return;
+        }
+
+        updateGUI(earthquakes);
+
+    }
+
+    @Override
+    public void onLoaderReset(android.content.Loader<ArrayList<Earthquake>> loader) {
+        ArrayList<Earthquake> earthquakes= new ArrayList<Earthquake>();
+        updateGUI(earthquakes);
+
+    }
+
 
 }
