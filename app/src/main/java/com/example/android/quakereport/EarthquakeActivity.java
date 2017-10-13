@@ -26,6 +26,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,10 +44,30 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
      */
     private static final int EARTHQUAKE_LOADER_ID = 1;
 
+
+    private ListView mEarthquakeListView;
+
+    /** TextView that is displayed when the list is empty */
+    private TextView mEmptyStateTextView;
+
+    /** Progress bar to indicate the information is being downloaded fron Internet **/
+    private ProgressBar mProgressBar;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.earthquake_activity);
+
+        // Find a reference to the {@link ListView} in the layout
+        mEarthquakeListView = (ListView) findViewById(R.id.list);
+
+        //Set the view to be displayed when the ListView is empty
+        mEmptyStateTextView = (TextView) findViewById(R.id.empty_view);
+
+        //Set the view to display the progressbat while the the information from intenert it fetched.
+        mProgressBar = (ProgressBar) findViewById(R.id.loading_spinner);
+
 
 
         // Get a reference to the LoaderManager, in order to interact with loaders.
@@ -66,19 +88,21 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
     private void updateGUI(ArrayList<Earthquake> earthquakes){
 
-        // Find a reference to the {@link ListView} in the layout
-        ListView earthquakeListView = (ListView) findViewById(R.id.list);
+
+        mEarthquakeListView.setEmptyView(mEmptyStateTextView);
 
         // Create a new {@link ArrayAdapter} of earthquakes
         final EarthquakeAdapter adapter = new EarthquakeAdapter(this, earthquakes);
 
         // Set the adapter on the {@link ListView}
         // so the list can be populated in the user interface
-        earthquakeListView.setAdapter(adapter);
+        mEarthquakeListView.setAdapter(adapter);
+
+
 
 
         //Create onItemClickListener
-        earthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+        mEarthquakeListView.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -108,6 +132,12 @@ public class EarthquakeActivity extends AppCompatActivity implements LoaderManag
 
     @Override
     public void onLoadFinished(android.content.Loader<ArrayList<Earthquake>> loader, ArrayList<Earthquake> earthquakes) {
+        // Set empty state text to display "No earthquakes found."
+        mEmptyStateTextView.setText(R.string.no_earthquakes);
+
+        //Hide the progressbar when the loading progress is finished
+        mProgressBar.setVisibility(View.GONE);
+
         if (earthquakes==null){
             return;
         }
